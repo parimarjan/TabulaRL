@@ -1,0 +1,18 @@
+Results briefly:
+    -
+    -
+
+ARS:
+    - implement BRS + ARS, and test on all these environments
+
+DeepSea:
+    - add this environment and test all the algorithms
+
+New environments to add:
+    - openai tabular ones
+        - CartPole homework
+        - inverted pendulum
+        - others?
+
+Questions to explore:
+    - what does the scale parameter do

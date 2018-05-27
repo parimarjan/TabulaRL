@@ -380,7 +380,6 @@ def make_stateBanditMDP(stateMul, gap=0.1):
     inds = (np.arange(nState) % 2) > 0
     P_true[0, 1][inds] = (0.5 + gap) / stateMul
     P_true[0, 1][~inds] = (0.5 - gap) / stateMul
-    # P_true[0, 1][-inds] = (0.5) / stateMul
 
     P_true[0, 1][0] = 0
 
