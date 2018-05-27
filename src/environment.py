@@ -342,8 +342,6 @@ def make_hardBanditMDP(epLen, gap=0.01, nAction=2, pSuccess=0.5):
     return hardBanditMDP
 
 
-
-
 def make_stateBanditMDP(stateMul, gap=0.1):
     '''
     Creates a bandit-style MDP which examines dependence on states.
@@ -381,7 +379,9 @@ def make_stateBanditMDP(stateMul, gap=0.1):
     # Rewarding states
     inds = (np.arange(nState) % 2) > 0
     P_true[0, 1][inds] = (0.5 + gap) / stateMul
-    P_true[0, 1][-inds] = (0.5 - gap) / stateMul
+    P_true[0, 1][~inds] = (0.5 - gap) / stateMul
+    # P_true[0, 1][-inds] = (0.5) / stateMul
+
     P_true[0, 1][0] = 0
 
     stateBanditMDP = TabularMDP(nState, nAction, epLen)
@@ -389,6 +389,7 @@ def make_stateBanditMDP(stateMul, gap=0.1):
     stateBanditMDP.P = P_true
     stateBanditMDP.reset()
 
+    print('returning stateBandit MDP')
     return stateBanditMDP
 
 def make_confidenceMDP(stateMul, gap=0.1):

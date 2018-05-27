@@ -48,7 +48,9 @@ if __name__ == '__main__':
     print '******************************************************************'
 
     # Make the environment
-    env = environment.make_riverSwim(args.ep_len, args.num_states)
+    # env = environment.make_riverSwim(args.ep_len, args.num_states)
+    # env = environment.make_bootDQNChain(args.num_states, args.ep_len, 2)
+    env = environment.make_stateBanditMDP(args.num_states, gap=0.1)
 
     # Make the feature extractor
     f_ext = FeatureTrueState(env.epLen, env.nState, env.nAction, env.nState)
