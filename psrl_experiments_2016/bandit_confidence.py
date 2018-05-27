@@ -106,7 +106,7 @@ def outputConfidenceKnownP(alg, nextStateMul, nObs):
 
     # Letting the agent know the transitions, but not the rewards
     agent.R_prior[0, 0] = (0, 1e9)
-    agent.P_prior[0, 0][0] = 0
+    agent.P_prior[0, 0][0] = 1e9
     for s in range(1, env.nState):
         agent.P_prior[0, 0][s] += 1e9
         agent.P_prior[s, 0][s] += 1e9
