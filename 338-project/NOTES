@@ -15,4 +15,9 @@ New environments to add:
         - others?
 
 Questions to explore:
+    - what is map_mdp() in epsilonGreedy / in general differences between these
+    agents and the ones we were implementing for the homework...
+
     - what does the scale parameter do
+    - what is it about stateBanditMDP that makes epsilon greedy perform better
+    than UCRL?

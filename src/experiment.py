@@ -70,6 +70,15 @@ def run_finite_tabular_experiment(agent, env, f_ext, nEps, seed=1,
         else:
             recFreq = 10000
 
+        # if epReward > 0:
+            # # pari: sometimes regret is negative, why? is epMaxVal expected max
+            # # and not actual max?
+            # print('episode: {}, reward: {}, regret: {}'.format(ep, epReward,
+                # epMaxVal-epReward))
+        # else:
+            # print('reward is 0')
+            # print('max reward is: ', epMaxVal)
+
         # Logging to dataframe
         if ep % recFreq == 0:
             data.append([ep, epReward, cumReward, cumRegret, empRegret])

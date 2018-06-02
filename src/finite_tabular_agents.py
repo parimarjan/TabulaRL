@@ -71,6 +71,7 @@ class FiniteHorizonTabularAgent(FiniteHorizonAgent):
                 self.P_prior[state, action] = (
                     self.alpha0 * np.ones(self.nState, dtype=np.float32))
 
+    # PN: we don't need this for ARS I think.
     def update_obs(self, oldState, action, reward, newState, pContinue, h):
         '''
         Update the posterior belief based on one transition.
