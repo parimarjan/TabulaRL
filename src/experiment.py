@@ -135,10 +135,15 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
         epMaxVal = qMax[env.timestep][env.state]
         reward_differences = 0
 
+        #create list to store all the rewards
+        list_of_pos_rewards = []
+        list_of_neg_rewards = []
+        list_of_noise = []
+
+
         for ep in xrange(agent.batch_size):
 
             noise = np.random.normal(size=agent.theta.shape)
-            noise = noise
             theta_pos = agent.theta + (noise*agent.v)
             theta_neg = agent.theta - (noise*agent.v)
 
@@ -151,8 +156,12 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
             agent.cur_theta = theta_neg
             epRewardNeg, epRegretMinus = run_episode()
 
+            list_of_pos_rewards.append(epRewardPos)
+            list_of_neg_rewards.append(epRewardNeg)
+            list_of_noise.append(noise)
+
             ## update reward differences.
-            reward_differences += (epRewardPos - epRewardNeg)*noise
+            #reward_differences += (epRewardPos - epRewardNeg)*noise
 
             cumReward += epRewardPos + epRewardNeg
             cumRegret += epRegretPlus + epRegretMinus
@@ -183,7 +192,52 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
                 copyfile('tmp.csv', targetPath)
                 print '****************************'
 
-        agent.theta = agent.theta + (agent.alpha / agent.batch_size)*reward_differences
+
+        list_of_pos_rewards = np.array(list_of_pos_rewards)
+        list_of_neg_rewards = np.array(list_of_neg_rewards)
+        list_of_noise= np.array(list_of_noise)
+
+        reward_differences = 0
+        for i in range(0, len(list_of_pos_rewards)):
+            reward_differences += (list_of_pos_rewards[i] - list_of_neg_rewards[i])*list_of_noise[i]
+        
+
+        #reward_differences = np.sum((list_of_pos_rewards - list_of_neg_rewards)*list_of_noise)
+
+        if (agent.version == 'v1'):
+            sigma_R = np.std(np.append(list_of_pos_rewards, list_of_neg_rewards))
+            if sigma_R == 0:
+                sigma_R = 1
+            agent.theta = agent.theta + (agent.alpha / (agent.batch_size*sigma_R))*reward_differences
+
+        if (agent.version == 'v1-t'):
+            maxlist = []
+            for i in range(0, len(list_of_pos_rewards)):
+                maxlist.append(max(list_of_pos_rewards[i], list_of_neg_rewards[i]))
+
+            maxlist = np.array(maxlist)
+            top_b_indices = maxlist.argsort()[-agent.b:][::-1]
+
+            top_pos = list_of_pos_rewards[top_b_indices]
+            top_neg = list_of_neg_rewards[top_b_indices]
+            top_noise = list_of_noise[top_b_indices]
+
+            reward_differences = 0
+            for i in range(0, len(top_pos)):
+                reward_differences += (top_pos[i] - top_neg[i])*top_noise[i]
+
+
+            sigma_R = 1
+            #sigma_R = np.std(np.append(top_pos, top_neg))
+            #if sigma_R == 0:
+                #sigma_R = 1
+            agent.theta = agent.theta + (agent.alpha / (agent.batch_size*sigma_R))*reward_differences
+
+
+
+
+
+        else: agent.theta = agent.theta + (agent.alpha / agent.batch_size)*reward_differences
 
     print '**************************************************'
     print 'Experiment complete'

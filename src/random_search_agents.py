@@ -3,8 +3,8 @@ import numpy as np
 
 class BasicRandomSearch(Agent):
 
-    def __init__(self, nState, nAction, epLen, scaling=0.0, alpha=0.1,
-            batch_size=10, v=1.0, epsilon=0.0):
+    def __init__(self, nState, nAction, epLen, scaling=0.0, alpha=0.1, b = 15,
+            batch_size=30, v=1.0, epsilon=0.0, version = 'v1-t'):
 
         # ignore this for now.
         # self.epLen = epLen
@@ -13,6 +13,8 @@ class BasicRandomSearch(Agent):
         self.batch_size = batch_size
         self.v = v
         self.epsilon = epsilon
+        self.version = version
+        self.b = b
 
         self.theta = np.zeros((nState, nAction))
         self.cur_theta = np.zeros((nState, nAction))
