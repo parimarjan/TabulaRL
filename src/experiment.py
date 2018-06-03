@@ -159,7 +159,7 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
             empRegret += (epMaxVal - epRewardPos) + (epMaxVal - epRewardNeg)
 
             # Variable granularity
-            cur_ep = batch*agent.batch_size + ep*2
+            cur_ep = batch*agent.batch_size*2 + ep*2
 
             if cur_ep < 1e4:
                 recFreq = 100

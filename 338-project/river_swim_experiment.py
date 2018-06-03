@@ -77,9 +77,13 @@ if __name__ == '__main__':
                               scaling=args.scaling)
 
     # Run the experiment
-    # run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
-                        # recFreq=100, fileFreq=1000, targetPath=targetPath)
+    if args.alg == "BRS":
+        run_random_search_experiment(agent, env, f_ext, args.nEps, args.seed,
+                            recFreq=100, fileFreq=1000, targetPath=targetPath)
 
-    run_random_search_experiment(agent, env, f_ext, args.nEps, args.seed,
-                        recFreq=100, fileFreq=1000, targetPath=targetPath)
+    else:
+        run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
+                            recFreq=100, fileFreq=1000, targetPath=targetPath)
+
+
 
