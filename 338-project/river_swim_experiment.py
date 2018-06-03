@@ -13,8 +13,9 @@ import environment
 import finite_tabular_agents
 
 from feature_extractor import FeatureTrueState
-from experiment import run_finite_tabular_experiment
+from experiment import run_finite_tabular_experiment,run_random_search_experiment
 
+import random_search_agents
 
 
 if __name__ == '__main__':
@@ -67,7 +68,8 @@ if __name__ == '__main__':
                 'BOLT': finite_tabular_agents.BOLT,
                 'UCRL2': finite_tabular_agents.UCRL2,
                 'UCFH': finite_tabular_agents.UCFH,
-                'EpsilonGreedy': finite_tabular_agents.EpsilonGreedy}
+                'EpsilonGreedy': finite_tabular_agents.EpsilonGreedy,
+                'BRS': random_search_agents.BasicRandomSearch}
 
     agent_constructor = alg_dict[args.alg]
 
@@ -75,6 +77,9 @@ if __name__ == '__main__':
                               scaling=args.scaling)
 
     # Run the experiment
-    run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
+    # run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
+                        # recFreq=100, fileFreq=1000, targetPath=targetPath)
+
+    run_random_search_experiment(agent, env, f_ext, args.nEps, args.seed,
                         recFreq=100, fileFreq=1000, targetPath=targetPath)
 

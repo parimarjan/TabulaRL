@@ -766,3 +766,5 @@ class EpsilonGreedy(FiniteHorizonTabularAgent):
         '''
         action = self.egreedy(state, timestep, self.epsilon)
         return action
+
+
