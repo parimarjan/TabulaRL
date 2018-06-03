@@ -106,6 +106,7 @@ class FiniteHorizonTabularAgent(FiniteHorizonAgent):
         Returns:
             action - int
         '''
+        # original version
         Q = self.qVals[state, timestep]
         nAction = Q.size
         noise = np.random.rand()
@@ -165,6 +166,38 @@ class FiniteHorizonTabularAgent(FiniteHorizonAgent):
 
         return R_hat, P_hat
 
+    # no timestep version
+    # def compute_qVals(self, R, P):
+        # '''
+        # Compute the Q values for a given R, P estimates
+
+        # Args:
+            # R - R[s,a] = mean rewards
+            # P - P[s,a] = probability vector of transitions
+
+        # Returns:
+            # qVals - qVals[state, timestep] is vector of Q values for each action
+            # qMax - qMax[timestep] is the vector of optimal values at timestep
+        # '''
+        # print('in compute qVals')
+        # qVals = {}
+        # qMax = {}
+
+        # qMax = np.zeros(self.nState, dtype=np.float32)
+
+        # qMax = np.zeros(self.nState, dtype=np.float32)
+
+        # for s in range(self.nState):
+            # qVals[s] = np.zeros(self.nAction, dtype=np.float32)
+
+            # for a in range(self.nAction):
+                # qVals[s][a] = R[s, a] + np.dot(P[s, a], qMax)
+
+            # qMax[s] = np.max(qVals[s])
+
+        # return qVals, qMax
+
+    # original version!!
     def compute_qVals(self, R, P):
         '''
         Compute the Q values for a given R, P estimates

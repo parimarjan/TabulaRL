@@ -130,7 +130,7 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
     cumReward = 0
     empRegret = 0
 
-    for batch in xrange(0, ((nEps + 1) / agent.batch_size)):
+    for batch in xrange(0, ((nEps + 1) / (agent.batch_size*2))):
         # Reset the environment
         epMaxVal = qMax[env.timestep][env.state]
         reward_differences = 0
