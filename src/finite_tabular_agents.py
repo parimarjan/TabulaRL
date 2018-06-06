@@ -323,6 +323,8 @@ class PSRL(FiniteHorizonTabularAgent):
     '''
     Posterior Sampling for Reinforcement Learning
     '''
+    def __str__(self):
+        return "PSRL"
 
     def update_policy(self, h=False):
         '''
@@ -586,6 +588,8 @@ class UCRL2(FiniteHorizonTabularAgent):
         self.delta = delta
         self.scaling = scaling
 
+    def __str__(self):
+        return "UCRL2"
 
     def get_slack(self, time):
         '''
@@ -775,6 +779,9 @@ class EpsilonGreedy(FiniteHorizonTabularAgent):
         super(EpsilonGreedy, self).__init__(nState, nAction, epLen,
                                             alpha0=0.0001, tau0=0.0001)
         self.epsilon = epsilon
+
+    def __str__(self):
+        return "EpsilonGreedy"
 
     def update_policy(self, time=False):
         '''

@@ -16,6 +16,8 @@ from feature_extractor import FeatureTrueState
 from experiment import run_finite_tabular_experiment,run_random_search_experiment
 
 import random_search_agents
+from collections import defaultdict
+from matplotlib import pyplot as plt
 
 
 if __name__ == '__main__':
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Make a filename to identify flags
-    fileName = ('chainLen'
+    fileName = ('riverSwim'
                 + '_len=' + '%03.f' % args.ep_len
                 + '_num_states' + '%03.f' % args.num_states
                 + '_alg=' + str(args.alg)
@@ -42,7 +44,7 @@ if __name__ == '__main__':
                 + '_seed=' + str(args.seed)
                 + '.csv')
 
-    folderName = './'
+    folderName = './data/'
     targetPath = folderName + fileName
     print '******************************************************************'
     print fileName
@@ -71,19 +73,51 @@ if __name__ == '__main__':
                 'EpsilonGreedy': finite_tabular_agents.EpsilonGreedy,
                 'BRS': random_search_agents.BasicRandomSearch}
 
-    agent_constructor = alg_dict[args.alg]
+    # agent_constructor = alg_dict[args.alg]
+    # agent = agent_constructor(env.nState, env.nAction, env.epLen,
+                              # scaling=args.scaling)
 
-    agent = agent_constructor(env.nState, env.nAction, env.epLen,
-                              scaling=args.scaling)
+    rs_agent = random_search_agents.BasicRandomSearch(env.nState, env.nAction,
+            env.epLen, scaling=args.scaling)
+    # agent_constructors = [finite_tabular_agents.PSRL]
+    agent_constructors = []
+
+    agents = []
+
+    for constructor in agent_constructors:
+        agents.append(constructor(env.nState, env.nAction, env.epLen,
+            scaling=args.scaling))
+
+    seeds = [1,2]
+    data = defaultdict(list)
+    for s in seeds:
+        # run random search agent
+        env.reset()
+        cumRegrets = run_random_search_experiment(rs_agent, env, f_ext,
+                args.nEps, s)
+        data['PSRL'].append(cumRegrets)
+
+        for agent in agents:
+            cumRegrets = run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
+                                recFreq=100, fileFreq=1000, targetPath=targetPath)
+            data[agent.__str__()].append(cumRegrets)
+
+
+    # plotting time!
+    for agent in data:
+        print(agent)
+        x = [i*100 for i in range(len(y))]
+        y = np.mean(data[agent], axis=0)
+        stdev = np.std(data[agent], axis=0)
+        pl.plot(x, y, 'k-')
+        pl.fill_between(x, y-error, y+error)
+        pl.show()
 
     # Run the experiment
-    if args.alg == "BRS":
-        run_random_search_experiment(agent, env, f_ext, args.nEps, args.seed,
-                            recFreq=100, fileFreq=1000, targetPath=targetPath)
+    # if args.alg == "BRS":
+        # cumRegrets = run_random_search_experiment(agent, env, f_ext, args.nEps, args.seed,
+                            # recFreq=100, fileFreq=1000, targetPath=targetPath)
 
-    else:
-        run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
-                            recFreq=100, fileFreq=1000, targetPath=targetPath)
-
-
-
+    # else:
+        # cumRegrets = run_finite_tabular_experiment(agent, env, f_ext, args.nEps, args.seed,
+                            # recFreq=100, fileFreq=1000, targetPath=targetPath)

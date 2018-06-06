@@ -6,7 +6,6 @@ author: iosband@stanford.edu
 
 import numpy as np
 import pandas as pd
-
 from shutil import copyfile
 
 def run_finite_tabular_experiment(agent, env, f_ext, nEps, seed=1,
@@ -27,6 +26,7 @@ def run_finite_tabular_experiment(agent, env, f_ext, nEps, seed=1,
     Returns:
         NULL - data is output to targetPath as csv file
     '''
+    cumRegrets = []
     data = []
     qVals, qMax = env.compute_qVals()
     np.random.seed(seed)
@@ -34,6 +34,7 @@ def run_finite_tabular_experiment(agent, env, f_ext, nEps, seed=1,
     cumRegret = 0
     cumReward = 0
     empRegret = 0
+    env.reset()
 
     for ep in xrange(1, nEps + 2):
         # Reset the environment
@@ -81,18 +82,20 @@ def run_finite_tabular_experiment(agent, env, f_ext, nEps, seed=1,
 
         # Logging to dataframe
         if ep % recFreq == 0:
-            data.append([ep, epReward, cumReward, cumRegret, empRegret])
-            print 'episode:', ep, 'epReward:', epReward, 'cumRegret:', cumRegret
+            cumRegrets.append(cumRegret)
+            # data.append([ep, epReward, cumReward, cumRegret, empRegret])
+            # print 'episode:', ep, 'epReward:', epReward, 'cumRegret:', cumRegret
 
-        if ep % max(fileFreq, recFreq) == 0:
-            dt = pd.DataFrame(data,
-                              columns=['episode', 'epReward', 'cumReward',
-                                       'cumRegret', 'empRegret'])
-            print 'Writing to file ' + targetPath
-            dt.to_csv('tmp.csv', index=False, float_format='%.2f')
-            copyfile('tmp.csv', targetPath)
-            print '****************************'
+        # if ep % max(fileFreq, recFreq) == 0:
+            # dt = pd.DataFrame(data,
+                              # columns=['episode', 'epReward', 'cumReward',
+                                       # 'cumRegret', 'empRegret'])
+            # print 'Writing to file ' + targetPath
+            # dt.to_csv('tmp.csv', index=False, float_format='%.2f')
+            # copyfile('tmp.csv', targetPath)
+            # print '****************************'
 
+    return cumRegrets
     print '**************************************************'
     print 'Experiment complete'
     print '**************************************************'
@@ -121,7 +124,8 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
 
         return epReward, epRegret
 
-
+    env.reset()
+    cumRegrets = []
     data = []
     qVals, qMax = env.compute_qVals()
     np.random.seed(seed)
@@ -169,21 +173,25 @@ def run_random_search_experiment(agent, env, f_ext, nEps, seed=1,
                 recFreq = 10000
 
             # Logging to dataframe
-            if cur_ep % recFreq == 0:
-                print(cur_ep)
-                data.append([cur_ep, epRewardPos, cumReward, cumRegret, empRegret])
-                print 'episode:', cur_ep, 'epRewardPos:', epRewardPos, 'cumRegret:', cumRegret
 
-            if cur_ep % max(fileFreq, recFreq) == 0:
-                dt = pd.DataFrame(data,
-                                  columns=['episode', 'epReward', 'cumReward',
-                                           'cumRegret', 'empRegret'])
-                print 'Writing to file ' + targetPath
-                dt.to_csv('tmp.csv', index=False, float_format='%.2f')
-                copyfile('tmp.csv', targetPath)
-                print '****************************'
+            # FIXME: how often do we want it to record.
+            if cur_ep % recFreq == 0:
+                # data.append([cur_ep, epRewardPos, cumReward, cumRegret, empRegret])
+                # print 'episode:', cur_ep, 'epRewardPos:', epRewardPos, 'cumRegret:', cumRegret
+                cumRegrets.append(cumRegret)
+
+            # if cur_ep % max(fileFreq, recFreq) == 0:
+                # dt = pd.DataFrame(data,
+                                  # columns=['episode', 'epReward', 'cumReward',
+                                           # 'cumRegret', 'empRegret'])
+                # print 'Writing to file ' + targetPath
+                # dt.to_csv('tmp.csv', index=False, float_format='%.2f')
+                # copyfile('tmp.csv', targetPath)
+                # print '****************************'
 
         agent.theta = agent.theta + (agent.alpha / agent.batch_size)*reward_differences
+
+    return cumRegrets
 
     print '**************************************************'
     print 'Experiment complete'
